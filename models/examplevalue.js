@@ -1,13 +1,13 @@
 'use strict'
 module.exports = (sequelize, DataTypes) => {
-	const PaymentAdjustmentValue = sequelize.define('PaymentAdjustmentValue', {
+	const ExampleValue = sequelize.define('ExampleValue', {
 		data: DataTypes.JSON,
 		startsAt: DataTypes.DATE,
 		endsAt: DataTypes.DATE,
 		active: DataTypes.BOOLEAN
 	}, {})
-	PaymentAdjustmentValue.associate = function(models) {
-		PaymentAdjustmentValue.belongsTo(models.PaymentAdjustment)
+	ExampleValue.associate = function(models) {
+		ExampleValue.belongsTo(models.Example)
 	}
-	return PaymentAdjustmentValue
+	return ExampleValue
 }

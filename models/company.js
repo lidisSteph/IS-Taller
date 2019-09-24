@@ -20,11 +20,11 @@ module.exports = (sequelize, DataTypes) => {
 	})
 	Company.associate = function(models) {
 		Company.belongsTo(models.Municipality)
-		Company.belongsToMany(models.ContractType, {
-			through: 'CompanyContractTypes',
-			as: 'contractTypes',
-			foreignKey: 'CompanyId'
-		})
+		// Company.belongsToMany(models.ContractType, {
+		// 	through: 'CompanyContractTypes',
+		// 	as: 'contractTypes',
+		// 	foreignKey: 'CompanyId'
+		// })
 	}
 	return Company
 }
