@@ -12,11 +12,9 @@ var storage = multer.diskStorage({
 })
 var upload = multer({storage: storage})
 
-const Op = require('sequelize').Op
+// const Op = require('sequelize').Op
 const Company = require('../models').Company
 const CompanyContractType = require('../models').CompanyContractType
-const CompanyType = require('../models').CompanyType
-const ContractType = require('../models').ContractType
 const Municipality = require('../models').Municipality
 const Country = require('../models').Country
 const Department = require('../models').Department

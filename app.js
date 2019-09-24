@@ -6,7 +6,7 @@ var logger = require('morgan')
 var cors = require('cors')
 
 var indexRouter = require('./routes/index')
-var companiesRouter = require('./routes/companies')
+// var companiesRouter = require('./routes/companies')
 
 var app = express()
 
@@ -21,7 +21,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
-app.use('/companies', companiesRouter)
+// app.use('/companies', companiesRouter)
 
 
 // catch 404 and forward to error handler
