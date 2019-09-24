@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include partials/head %>
+    </head>
+    <body>
+        <main class="">
+            <div class="card bg-light mr-auto ml-auto login">
+                <h2 class="card-header text-color-1 bg-1">Registro</h2>
+                <div class="card-body">
+                    <form enctype="multipart/form-data" action="http://localhost:3000/company/signup" method="POST">
+                        <div class="container">
+                            <div class="">
+                                <div class="form-group">
+                                    <label for="name" class="bmd-label-floating">Nombre</label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                    <div class="invalid-feedback" id="invalid-name">
+                                        Introduzca el nombre de la empresa.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="company-type" class="bmd-label-floating">Rubro</label>
+                                    <select class="form-control" id="company-type" name="company-type">
+                                        <option value="-1" disabled selected>Seleccione un rubro</option>
+                                        <% for (let type of companyTypes) { %>
+                                            <option value="<%= type.id %>"> <%= type.name %> </option>
+                                        <% } %>
+                                        <!-- <option value="1">Agro</option>
+                                        <option value="2">Minería</option>
+                                        <option value="3">Comercio</option> -->
+                                    </select>
+                                    <div class="invalid-feedback" id="invalid-company-type">
+                                        Seleccione el rubro de la empresa.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tax-id" class="bmd-label-floating">RTN</label>
+                                    <input type="text" class="form-control" id="tax-id" name="tax-id">
+                                    <div class="invalid-feedback" id="invalid-tax-id">
+                                        Introduzca el RTN de la empresa.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="municipality" class="bmd-label-floating">Municipalidad</label>
+                                    <select class="form-control" id="municipality" name="municipality">
+                                        <option value="-1" disabled selected>Seleccione la municipalidad</option>
+                                        <% for (let obj of municipalities) { %>
+                                            <option value="<%= obj.id %>"> <%= obj.name %> </option>
+                                        <% } %>
+                                        <!-- <option value="1">Distrito Central</option>
+                                        <option value="2">Por hora</option> -->
+                                    </select>
+                                    <div class="invalid-feedback" id="invalid-municipality">
+                                        Seleccione la municipalidad.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="currency" class="bmd-label-floating">Moneda</label>
+                                    <select class="form-control" id="currency" name="currency">
+                                        <option value="-1" disabled selected>Seleccione una moneda</option>
+                                        <% for (let obj of currencies) { %>
+                                            <option value="<%= obj.id %>"> <%= obj.name %> </option>
+                                        <% } %>
+                                        <!-- <option value="1">Lempira</option>
+                                        <option value="2">Dólar estadounidense</option> -->
+                                    </select>
+                                    <div class="invalid-feedback" id="invalid-currency">
+                                        Seleccione una moneda.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contract-types" class="bmd-label-floating">Tipos de contrato</label>
+                                    <select class="form-control" id="contract-types" multiple size="3" name="contract-types">
+                                        <% for (let obj of contractTypes) { %>
+                                            <option value="<%= obj.id %>"> <%= obj.name %> </option>
+                                        <% } %>
+                                        <!-- <option value="1">Permanente</option>
+                                        <option value="2">Por hora</option> -->
+                                    </select>
+                                    <div class="invalid-feedback" id="invalid-contract-types">
+                                        Seleccione los tipos de contrato.
+                                    </div>
+                                </div>
+                                <div class="container mb-2">
+                                    <div class="row justify-content-center">
+                                        <div class="col-auto">
+                                            <button type="button" id="open-file" class="btn btn-default">Seleccionar logo</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-8 offset-2">
+                                            <input type="file" class="form-control-file" id="logo" accept="image/*" name="logo">
+                                            <img src="/img/logo_place.png" alt="logo" class="img-fluid" id="preview">
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback" id="invalid-logo">
+                                        Seleccione un logotipo.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <!-- <button type="button" class="btn btn-default">Cancelar</button> -->
+                                <button type="submit" class="btn btn-1">Registrar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <% include partials/scripts %>
+        <script>
+            $(document).ready(() => {
+                $('form').submit(function(event) {
+                    event.preventDefault();
+
+                    let error = false;
+
+                    if($('#name').val() === ''){
+                        $('#invalid-name').css('display', 'block');
+                        error = true;
+                    }
+
+                    if($('#tax-id').val() === ''){
+                        $('#invalid-tax-id').css('display', 'block');
+                        error = true;
+                    }
+
+                    if(!$('#company-type').val()){
+                        $('#invalid-company-type').css('display', 'block');
+                        error = true;
+                    }
+
+                    if($('#contract-types').val().length === 0){
+                        $('#invalid-contract-types').css('display', 'block');
+                        error = true;
+                    }
+
+                    if(!$('#currency').val()){
+                        $('#invalid-currency').css('display', 'block');
+                        error = true;
+                    }
+
+                    if(!$('#municipality').val()){
+                        $('#invalid-municipality').css('display', 'block');
+                        error = true;
+                    }
+
+                    if(!$('#payment-cycle').val()){
+                        $('#invalid-payment-cycle').css('display', 'block');
+                        error = true;
+                    }
+
+                    if($('#logo').val() === ''){
+                        $('#invalid-logo').css('display', 'block');
+                        error = true;
+                    }
+
+                    if (error) {
+                        $.snackbar({
+                            content: "Verifique los campos",
+                            timeout: 2300
+                        });
+
+                        return
+                    };
+
+                    $(this).ajaxSubmit({
+                        error: function(xhr) {
+                            console.log('Error: ' + xhr.status);
+                        },
+                        success: function(response) {
+                            console.log(response)
+                            Swal.fire({
+                                title: '¡Éxito!',
+                                html: `Su empresa <strong>${response.company.name}</strong> ha sido creada.`,
+                                type: 'success'
+                            })
+                        }
+                    });
+                });
+
+                $('#name').focus(function() {
+                    $('#invalid-name').css('display', 'none');
+                })
+
+                $('#company-type').focus(function() {
+                    $('#invalid-company-type').css('display', 'none');
+                })
+
+                $('#payment-cycle').focus(function() {
+                    $('#invalid-payment-cycle').css('display', 'none');
+                })
+
+                $('#municipality').focus(function() {
+                    $('#invalid-municipality').css('display', 'none');
+                })
+
+                $('#currency').focus(function() {
+                    $('#invalid-currency').css('display', 'none');
+                })
+
+                $('#open-file').focus(function() {
+                    $('#invalid-logo').css('display', 'none');
+                })
+
+                $('#contract-types').focus(function() {
+                    $('#invalid-contract-types').css('display', 'none');
+                })
+
+                $('#tax-id').focus(function() {
+                    $('#invalid-tax-id').css('display', 'none');
+                })
+
+                $('#open-file').click(function() {
+                    $('#logo').click();
+                })
+
+                $('#logo').change(function() {
+                    readUrl(this);
+                })
+
+                function readUrl(input){
+                    if (input.files && input.files[0]) {
+                        let reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('#preview').attr('src', e.target.result)
+                        }
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+            })           
+        </script>
+    </body>
+</html>

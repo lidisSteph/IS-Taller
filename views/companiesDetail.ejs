@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include partials/head %>
+</head>
+
+<body>
+    <div class="sidevar">
+        <% include partials/sidevar %>
+    </div>
+    <main>
+        <h3>Modificar empresa</h3>
+        <div class="divider"></div>
+            <div class="row">
+                    <div class="col s3">
+                            <img src="<%= company.logo %>" style="max-height: 14rem" alt="logo"
+                                class="responsive-img" id="preview">
+                    </div>
+                <div class="col s9 ">
+                    <div class="input-field">
+                        <!-- <input id="name" type="text" name="name" value="<%= company.name %>"> -->
+                        <div class="detail"><%= company.name %></div> 
+                        <p ><strong>RTN: </strong><%= company.taxId %></p>
+                        <p ><strong>Número de Empleados: </strong><%= company.numberEmployees %></p>
+                        <p ><strong>Licencia: </strong><%= company.license %></p>
+                        <p ><strong>Moneda: </strong><%= company.Currency.name %></p>
+                        <p ><strong>Rubro: </strong><%= company.CompanyType.name %></p>
+                        <p ><strong>País:</strong> <%= company.Municipality.Department.Country.name %></p>
+                        <p ><strong>Departamento: </strong><%= company.Municipality.Department.name %></p>
+                        <p ><strong>Municipalidad: </strong> <%= company.Municipality.name %></p>
+                        <p ><strong>Tipos de Contratos: </strong>                  
+                            <% for (let type of company.contractTypes) { %>
+                            <span><%= type.name%></span>
+                            
+                            <% } %>
+                        </p>
+                      
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="divider"></div>
+
+            <div class="section right-align">
+                <a href="/companies/list" class="btn waves-effect waves-light red darken-2"id="open-file">
+                    Regresar
+                </a>
+            </div>
+
+    </main>
+
+    <% include partials/scripts %>
+    <script>
+        $(document).ready(function () {
+            $('select.select2').select2();
+
+            $('select.select1').formSelect();
+
+            $('#open-file').click(function () {
+                $('#logo').click();
+            })
+
+            $('#logo').change(function () {
+                $('#invalid-logo').hide();
+                readUrl(this);
+            })
+
+            $('select.select1').each(function (index, elem) {
+                let instance = M.FormSelect.getInstance(elem);
+                let input = $(instance.input);
+                input.attr('name', `${elem.id}-input`);
+            })
+
+            
+
+            
+
+
+            function readUrl(input) {
+                if (input.files && input.files[0]) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#preview').attr('src', e.target.result)
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

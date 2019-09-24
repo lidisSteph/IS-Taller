@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include partials/head %>
+</head>
+
+<body>
+    <div class="sidevar">
+        <% include partials/sidevar %>
+    </div>
+    <main>
+        <h3>Registrar empresa</h3>
+        <div class="divider"></div>
+
+        <form enctype="multipart/form-data" novalidate>
+            <div class="row">
+
+                <div class="col s12 m6">
+                    <div class="input-field">
+                        <input id="name" type="text" name="name">
+                        <label for="name">Nombre</label>
+                        <span class="helper-text">Ingrese el nombre de la empresa</span>
+                    </div>
+                </div>
+
+                <div class="col s12 m6">
+                    <div class="input-field">
+                        <input id="tax-id" type="text" name="tax-id">
+                        <label for="tax-id">RTN</label>
+                        <span class="helper-text">Ingrese el RTN de la empresa</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col s12 m6">
+                    <div class="input-field">
+                        <select class="select1" name="company-type" id="company-type" required>
+                            <option value="default" disabled selected>Rubro</option>
+                            <% for (let type of companyTypes) { %>
+                            <option value="<%= type.id %>"> <%= type.name %> </option>
+                            <% } %>
+                        </select>
+                        <span class="helper-text"> Seleccione el rubro de la empresa</span>
+                    </div>
+                </div>
+
+                <div class="col s12 m6">
+                    <div class="row">
+                        <input type="file" class="form-control-file" id="logo" accept="image/*" name="logo"
+                            style="display: none">
+                        <div class="col s12 m4 valign-wrapper logo-height">
+                            <img src="/img/logo_place.png" style="max-height: 6.865rem" alt="logo"
+                                class="responsive-img" id="preview">
+                        </div>
+                        <div class="col s12 m8 valign-wrapper logo-height">
+                            <button name="open-file" value="hola" class="btn waves-effect waves-light indigo lighten-1"
+                                type="button" id="open-file">
+                                Seleccionar logo
+                            </button>
+                        </div>
+                        <div class="col s12">
+                            <span class="invalid-logo" id="invalid-logo" style="display: none">El logo es obligatorio</span>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col s12 m6">
+
+                    <div class="input-field">
+                        <select class="select2" name="municipality" id="municipality" id="select2">
+                            <option value="" disabled selected >Municipalidad</option>
+                            <% for (let obj of municipalities) { %>
+                                <option value="<%= obj.id %>"> <%= obj.name %> </option>
+                            <% } %>
+                        </select>
+                        <span class="invalid-logo" id="municipality-error" style="display: none">Seleccione la municipalidad de la empresa</span>
+                        <span class="helper-text">Seleccione la municipalidad de la empresa</span>
+                    </div>
+                </div>
+
+                <div class="col s12 m6">
+                    <div class="input-field">
+                        <select class="select1" name="currency" id="currency">
+                            <option value="" disabled selected>Moneda</option>
+                            <% for (let obj of currencies) { %>
+                            <option value="<%= obj.id %>"> <%= obj.name %> </option>
+                            <% } %>
+                        </select>
+                        <span class="helper-text">Seleccione la moneda de la empresa</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col s12 m6">
+                    <div class="input-field">
+                        <select class="select1" multiple name="contract-types" id="contract-types">
+                            <option value="" disabled>Tipos de contrato</option>
+                            <% for (let obj of contractTypes) { %>
+                            <option value="<%= obj.id %>"> <%= obj.name %> </option>
+                            <% } %>
+                        </select>
+                        <span class="helper-text">Seleccione los tipos de
+                            contrato
+                            de la empresa</span>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+
+            <div class="divider"></div>
+
+            <div class="section right-align">
+                <button class="btn waves-effect waves-light indigo lighten-1" type="submit" id="open-file">
+                    Registrar
+                </button>
+                <a class="btn waves-effect waves-light red darken-2" href="/companies/list" id="open-file">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </main>
+
+    <% include partials/scripts %>
+    <script>
+        $(document).ready(function () {
+            $('select.select2').select2();
+
+            $('select.select1').formSelect();
+
+            $('#open-file').click(function () {
+                $('#logo').click();
+            })
+
+            $('#logo').change(function () {
+                $('#invalid-logo').hide();
+                readUrl(this);
+            })
+
+            $('select.select1').each(function (index, elem) {
+                let instance = M.FormSelect.getInstance(elem);
+                let input = $(instance.input);
+                input.attr('name', `${elem.id}-input`);
+            })
+
+            $.validator.addMethod("valueNotEquals", function (value, element, arg) {
+                return arg != value;
+            }, "Value must not equal arg.");
+
+            let validator = $('form').validate({
+                rules: {
+                    'name': {
+                        required: true
+                    },
+                    'tax-id': {
+                        required: true
+                    },
+                    'company-type-input': {
+                        valueNotEquals: 'Rubro'
+                    },
+                    'currency-input': {
+                        valueNotEquals: 'Moneda'
+                    },
+                    'contract-types-input': {
+                        valueNotEquals: 'Tipos de contrato'
+                    }
+                },
+                messages: {
+                    'name': 'El nombre es obligatorio',
+                    'tax-id': 'El RTN es obligatorio',
+                    'company-type-input': 'El rubro  es obligatorio',
+                    'currency-input': 'La moneda es obligatoria',
+                    'contract-types-input': 'Los tipos de contrato son obligatorios'
+                },
+                errorClass: 'invalid',
+                errorElement: 'span',
+                onclick: false,
+            });
+
+            $('select.select1').each(function (index, elem) {
+                $(elem).change(function () {
+                    validator.element(`input[name='${elem.id}-input']`)
+                })
+            });
+
+            $('#municipality').change(function() {
+                $('.select2-container--default .select2-selection--single, .select2-container--default.select2-container--focus .select2-selection--multiple').css('box-shadow', '0 1px 0 0 #4CAF50');
+                $('.select2-container--default .select2-selection--single, .select2-container--default.select2-container--focus .select2-selection--multiple').css('border-bottom', '1px solid #4CAF50');
+                $('#municipality-error').hide();
+            });
+
+            $('form').submit(function (event) {
+                event.preventDefault();
+
+                let valid = true;
+
+                if ($('#logo').val() === '') {
+                    $('#invalid-logo').show();
+                    valid = false;
+                }
+                
+                if (!$('#municipality').val()) {
+                    $('.select2-container--default .select2-selection--single, .select2-container--default.select2-container--focus .select2-selection--multiple').css('box-shadow', '0 1px 0 0 #F44336');
+                    $('.select2-container--default .select2-selection--single, .select2-container--default.select2-container--focus .select2-selection--multiple').css('border-bottom', '1px solid #F44336');
+                    $('#municipality-error').show();
+                    valid = false;
+                }
+                
+                if (!validator.valid()) return;
+                if (!valid) return;
+
+                let form = $('form')[0];
+                let formData = new FormData(form);
+                $.ajax({
+                    url: '/companies',
+                    method: 'POST',
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (data) {
+                        console.log(data);
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            html: `<strong>${data.company.name}</strong> ha sido creada.`,
+                            type: 'success'
+                        }).then(result => location.replace('/companies/list'))
+                    }
+                })
+            })
+
+            function readUrl(input) {
+                if (input.files && input.files[0]) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#preview').attr('src', e.target.result)
+                        $('#open-file').attr('value', e.target.result)
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

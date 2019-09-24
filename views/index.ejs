@@ -1,0 +1,14 @@
+<h1><%= title %></h1>
+<p>
+  Hola Marlon tengo hambre <%= title%>
+
+</p>
+<p>
+  <%= JSON.stringify(deductions) %>
+</p>
+
+<script>
+  (function () {
+    console.log(JSON.parse('<%- JSON.stringify(deductions) %>'))
+  })();
+</script>

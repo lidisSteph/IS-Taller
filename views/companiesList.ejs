@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include partials/head %>
+</head>
+
+<body>
+    <div class="sidevar">
+        <% include partials/sidevar %>
+    </div>
+    <main>
+        <h3>Empresas registradas</h3>
+        <div class="divider"></div>
+
+
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s10">
+                        <input type="text" class="validate" id="filter">
+                        <label for="filter">Buscar</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <button type="submit" class="waves-effect waves-light btn-small indigo lighten-1" id="btn-search"><i class="material-icons ">search</i></button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Collection -->
+            <div class="collection" id="companiesList"></div>
+
+            <!-- Pagination -->
+            <div class="col s12 m12">
+                <ul class="pagination" id="companies"></ul>
+            </div>
+            <div class="fixed-action-btn">
+                <a class="btn-floating btn-large red lighten-1" href="/companies/signup">
+                    <i class="large material-icons">add</i>
+                </a>
+            </div>
+        </div>
+    </main>
+    <% include partials/scripts %>
+    <script>
+
+        function activateCompany(id, name) {
+            Swal.fire({
+                title: 'Activando ' + name,
+                text: "¿Ésta seguro que desea activarla?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Sí, estoy seguro.'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '/companies/' + id,
+                        method: 'PUT',
+                        success: function (data) {
+                            console.log(data);
+                            if (data) {
+                                Swal.fire(
+                                    '¡Activada!',
+                                    'La empresa ' + name + ' ha sido activada.',
+                                    'success'
+                                ).then(() => location.reload())
+
+                            } else {
+                                Swal.fire(
+                                    '¡Ups, algo ha ido mal!',
+                                    'error'
+                                )
+                            }
+                        }
+                    })
+                }
+            })
+        }
+        function deactivateCompany(id, name) {
+            console.log(id)
+            Swal.fire({
+                title: 'Desactivando ' + name,
+                text: "¿Ésta seguro que desea desactivarla?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Sí, estoy seguro.'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '/companies/' + id,
+                        method: 'PUT',
+                        success: function (data) {
+                            console.log(data);
+                            if (data) {
+                                Swal.fire(
+                                    '¡Desactivada!',
+                                    'La empresa ' + name + ' ha sido desactivada.',
+                                    'success'
+                                ).then(() => location.reload())
+
+                            } else {
+                                Swal.fire(
+                                    '¡Ups, algo ha ido mal!',
+                                    'error'
+                                )
+                            }
+                        }
+                    })
+                }
+
+
+            })
+        }
+        $(document).ready(function () {
+            let companies = JSON.parse('<%- JSON.stringify(companies) %>');
+
+            let companiesToPrintHTML = '';
+            for (let company of companies) {
+                companiesToPrintHTML += generateCompanyItem(company);
+            }
+
+            $('#companiesList').html(companiesToPrintHTML);
+
+            $('.tooltipped').tooltip({
+                enterDelay: 0,
+                exitDelay: 0
+            });
+
+            $('.fixed-action-btn').floatingActionButton({
+                direction: 'left',
+                hoverEnabled: false
+            });
+            $('.fixed-action-btn').click(function () {
+                let fab = M.FloatingActionButton.getInstance(this)
+                $('.fixed-action-btn').each(function (idx, elem) {
+                    var instance = M.FloatingActionButton.getInstance(elem)
+                    if (instance.isOpen && instance != fab) {
+                        instance.close()
+                    }
+                })
+            })
+            $('form').submit(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '/companies',
+                    method: 'GET',
+                    dataType: 'JSON',
+                    data: { page: 1, filter: $('#filter').val() },
+                    success: function (data) {
+                        instanceComponents(data)
+
+                        if (data.companies.length === 0) {
+                            $('#companies').html('No hay coincidencias');
+                        } else {
+                            $('#companies').html('');
+                            $('#companies').materializePagination({
+                                align: 'center',
+                                lastPage: data.totalPages,
+                                firstPage: 1,
+                                urlParameter: 'page',
+                                useUrlParameter: true,
+                                onClickCallback: function (requestedPage) {
+
+                                    $.ajax({
+                                        url: '/companies',
+                                        method: 'GET',
+                                        dataType: 'JSON',
+                                        data: { page: requestedPage, filter: '' },
+                                        success: function (data) {
+                                            instanceComponents(data);
+                                        }
+                                    })
+                                }
+                            });
+                        }
+                    }
+                })
+            })
+  
+        })
+        
+        function instanceComponents(data){
+            let htmlToSend = ''
+            data.companies.forEach(elem => {
+                htmlToSend = htmlToSend + generateCompanyItem(elem);
+            });
+
+            $('#companiesList').html(htmlToSend);
+            $('.fixed-action-btn').floatingActionButton({
+                                direction: 'left',
+                                hoverEnabled: false
+                            });
+            $('.tooltipped').tooltip({
+                enterDelay: 0,
+                exitDelay: 0
+            });
+            $('.fixed-action-btn').click(function () {
+                let fab = M.FloatingActionButton.getInstance(this)
+                $('.fixed-action-btn').each(function (idx, elem) {
+                    var instance = M.FloatingActionButton.getInstance(elem)
+                    if (instance.isOpen && instance != fab) {
+                        instance.close()
+                    }
+                })
+            })
+
+        }
+
+        function generateCompanyItem(company) {
+            return `
+            <div class="collection-item avatar ${company.status == 'active' ? '' : 'blue-grey-text lighten-5 blue-grey'}">
+                <img src="`+ company.logo + `" alt="" class="circle">
+                <span class="title"> <strong>`+ company.name + `</strong> </span>
+                <p> <strong>Rubro: </strong> `+ company.CompanyType.name + `<br>
+                    <strong>RTN: </strong> `+ company.taxId + ` 
+                </p>
+                <div>
+                    <div class="fixed-action-btn click-to-toggle" style="position: absolute; right: 24px;">
+                        <a class="btn-floating indigo lighten-1 btn-small ">
+                            <i class="large material-icons">menu</i>
+                        </a>
+                        <ul style="right: 45px">
+                            <li ><a href="/companies/`+ company.id + `/detail" class="btn-floating btn-small  ${company.status == 'active' ? ' tooltipped blue' : ' disabled-l'}" data-position="bottom" data-tooltip="Detalle"><i
+                                        class=" material-icons">remove_red_eye</i></a></li>
+                            <li><a href="/companies/modify/`+ company.id + `" class="btn-floating btn-small ${company.status == 'active' ? ' tooltipped orange darken-1' : 'disabled-l'} "  data-position="bottom" data-tooltip="Modificar">
+                                <i class=" material-icons">mode_edit</i></a></li>
+                            <li><a onClick="`+ (company.status == 'active' ? `deactivateCompany('` + company.id + `','` + company.name + `')` : `activateCompany('` + company.id + `','` + company.name + `')`) + `" 
+                                class="btn-floating btn-small tooltipped  ${company.status == 'active' ? 'red' : 'green'} "  data-position="bottom" data-tooltip=" ${company.status == 'active' ? 'Desactivar' : 'Activar'} ">
+                                <i class=" material-icons">power_settings_new</i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>`
+        }
+    </script>
+</body>
+
+</html>
