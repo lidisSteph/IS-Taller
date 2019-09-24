@@ -159,25 +159,25 @@
                             $('#companies').html('No hay coincidencias');
                         } else {
                             $('#companies').html('');
-                            $('#companies').materializePagination({
-                                align: 'center',
-                                lastPage: data.totalPages,
-                                firstPage: 1,
-                                urlParameter: 'page',
-                                useUrlParameter: true,
-                                onClickCallback: function (requestedPage) {
+                            // $('#companies').materializePagination({
+                            //     align: 'center',
+                            //     lastPage: data.totalPages,
+                            //     firstPage: 1,
+                            //     urlParameter: 'page',
+                            //     useUrlParameter: true,
+                            //     onClickCallback: function (requestedPage) {
 
-                                    $.ajax({
-                                        url: '/companies',
-                                        method: 'GET',
-                                        dataType: 'JSON',
-                                        data: { page: requestedPage, filter: '' },
-                                        success: function (data) {
-                                            instanceComponents(data);
-                                        }
-                                    })
-                                }
-                            });
+                            //         $.ajax({
+                            //             url: '/companies',
+                            //             method: 'GET',
+                            //             dataType: 'JSON',
+                            //             data: { page: requestedPage, filter: '' },
+                            //             success: function (data) {
+                            //                 instanceComponents(data);
+                            //             }
+                            //         })
+                            //     }
+                            // });
                         }
                     }
                 })

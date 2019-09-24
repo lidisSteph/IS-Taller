@@ -23,24 +23,14 @@ const Department = require('../models').Department
 
 
 router.get('/list', async function(req, res, next) {
-	console.log(req.query.page)
 
 	try {
  
-		const options = {
-			attributes: ['id', 'name','logo','taxId','status'],
-			page: req.query.page || 1,
-			paginate: 5,
-			order: [['name', 'ASC']],
-			include: [CompanyType]
-
-		}
+		const companies = await Company.findAll()
 
 		res.render('companiesList', {
 			page: 'Registro Empresa',
-			companies: docs,
-			totalPages: pages,
-			totalRegistry: total
+			companies: companies
 		})
 	} catch (error) {
 		console.error(error)
