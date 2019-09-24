@@ -31,4 +31,4 @@ volumes:
   postgres_data_local: {}
 
 networks:
-  dynapaynet: {}
+  istallernet: {}
